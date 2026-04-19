@@ -123,11 +123,3 @@ For Wake-on-LAN to work, the target computer must:
 2. Have a network card that supports WOL
 3. Be connected via Ethernet (Wi-Fi WOL support varies)
 4. Be on the same network segment (or have proper routing configured)
-
-## License
-
-[Add your license here]
-
-## Contributing
-
-[Add contribution guidelines if applicable]
