@@ -1,6 +1,10 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ARG TARGETARCH
 WORKDIR /src
+
+# Install native AOT prerequisites
+RUN apt-get update && apt-get install -y clang zlib1g-dev
 
 # Copy project file and restore dependencies
 COPY WOLRelay/WOLRelay.csproj WOLRelay/
@@ -10,8 +14,16 @@ RUN dotnet restore "WOLRelay/WOLRelay.csproj"
 COPY WOLRelay/ WOLRelay/
 
 # Build and publish the application with AOT compilation
+# Use the correct runtime identifier based on target architecture
 WORKDIR /src/WOLRelay
-RUN dotnet publish -c Release -o /app/publish
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        RID="linux-x64"; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        RID="linux-arm64"; \
+    else \
+        echo "Unsupported architecture: $TARGETARCH" && exit 1; \
+    fi && \
+    dotnet publish -c Release -r $RID -o /app/publish
 
 # Runtime stage - using minimal base image for AOT
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0 AS final
