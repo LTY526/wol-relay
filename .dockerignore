@@ -1,0 +1,17 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/.vscode
+**/.vs
+**/.idea
+**/bin
+**/obj
+**/.toolstarget
+.env
+*.user
+*.suo
+*.userosscache
+*.userprefs
+*.log
+*.DS_Store
+Thumbs.db
