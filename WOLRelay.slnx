@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="WOLRelay.Agent/WOLRelay.Agent.csproj" />
+  <Project Path="WOLRelay.Shared/WOLRelay.Shared.csproj" />
   <Project Path="WOLRelay/WOLRelay.csproj" />
 </Solution>
