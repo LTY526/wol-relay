@@ -16,4 +16,7 @@ public sealed class AgentOptions
 
     /// <summary>When false, a Restart command is logged and ignored.</summary>
     public bool AllowRestart { get; set; } = true;
+
+    /// <summary>When false, a Sleep command is logged and ignored.</summary>
+    public bool AllowSleep { get; set; } = true;
 }

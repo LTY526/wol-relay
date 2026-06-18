@@ -36,24 +36,22 @@ netApi.MapGet("wake", (WakeOnLanService service, [FromQuery] string macAddress, 
 netApi.MapPost("shutdown", async (
     IHubContext<AgentHub> hub,
     AgentRegistry registry,
-    [FromQuery] string macAddress,
-    [FromQuery] string password = "",
-    [FromQuery] string mode = "shutdown",
-    [FromQuery] int delaySeconds = 0,
-    [FromQuery] string reason = "") =>
+    [FromBody] ShutdownRequest request) =>
 {
-    if (appPassword != password) return "Invalid request";
+    if (appPassword != request.Password) return "Invalid request";
 
-    if (!registry.TryGetConnectionId(macAddress, out var connectionId))
+    if (!registry.TryGetConnectionId(request.MacAddress, out var connectionId))
         return "Not connected";
+
+    var mode = Enum.TryParse<ShutdownMode>(request.Mode, ignoreCase: true, out var parsed)
+        ? parsed
+        : ShutdownMode.Shutdown;
 
     var command = new ShutdownCommand
     {
-        Mode = string.Equals(mode, "restart", StringComparison.OrdinalIgnoreCase)
-            ? ShutdownMode.Restart
-            : ShutdownMode.Shutdown,
-        DelaySeconds = delaySeconds,
-        Reason = reason,
+        Mode = mode,
+        DelaySeconds = request.DelaySeconds,
+        Reason = request.Reason,
     };
 
     await hub.Clients.Client(connectionId).SendAsync("Shutdown", command);
@@ -80,6 +78,7 @@ app.Run();
 [JsonSerializable(typeof(AgentInfo))]
 [JsonSerializable(typeof(AgentInfo[]))]
 [JsonSerializable(typeof(ShutdownCommand))]
+[JsonSerializable(typeof(ShutdownRequest))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }

@@ -28,6 +28,19 @@ public enum ShutdownMode
 {
     Shutdown = 0,
     Restart = 1,
+    Sleep = 2,
+}
+
+/// <summary>
+/// JSON body posted to the relay's /net/shutdown endpoint to power off, restart, or sleep a machine.
+/// </summary>
+public sealed class ShutdownRequest
+{
+    public string MacAddress { get; set; } = "";
+    public string Password { get; set; } = "";
+    public string Mode { get; set; } = "shutdown";
+    public int DelaySeconds { get; set; }
+    public string Reason { get; set; } = "";
 }
 
 /// <summary>
